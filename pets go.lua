@@ -299,3 +299,86 @@ end
 
 -- Запускаем функцию покупок асинхронно
 spawn(purchaseFromMerchants)
+
+-- Get reference to ReplicatedStorage
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Parameters for sending crafting commands
+local craftArgs = {
+    [1] = "LightningCraftingMachine",  -- Name of the crafting machine or type
+    [2] = 1,  -- Quantity of the first item
+    [3] = 1,  -- Quantity of the second item
+}
+
+-- Parameters for using an item
+local useItemArgs = {
+    [1] = "a574b64aadae42a48b668fdb5d0c1fab",  -- ID of the item
+    [2] = 1,  -- Quantity (e.g., 1)
+}
+
+-- Parameters for sending Lootbox
+local lootboxArgs = {
+    [1] = "",  -- Can be left empty or replaced with the desired name
+    [2] = "",  -- Can be left empty or replaced with the desired name
+    [3] = "Lootbox",
+    [4] = "f68076290c2948b583ec98b99104e83a",  -- Lootbox ID
+    [5] = 1,
+}
+
+-- Parameters for sending Misc (e.g., Bolt Of Lightning)
+local miscArgs = {
+    [1] = "",  -- Can be left empty or replaced with the desired name
+    [2] = "",  -- Can be left empty or replaced with the desired name
+    [3] = "Misc",
+    [4] = "da778ee0c46c4315a494e7f8d97c6ce8",  -- Misc ID (e.g., Bolt Of Lightning)
+    [5] = 1,
+}
+
+-- Function for auto crafting
+local function autoCraft()
+    while true do
+        -- Send command to the server to start crafting
+        game:GetService("ReplicatedStorage").Network["CraftingMachine_Craft"]:InvokeServer(unpack(craftArgs))
+        wait(1)  -- Interval between crafting actions (1 second)
+    end
+end
+
+-- Function for auto using items (e.g., Lightning Potion)
+local function autoUseItem()
+    while true do
+        -- Send command to the server to use the item
+        game:GetService("ReplicatedStorage").Network["Consumables_Consume"]:InvokeServer(unpack(useItemArgs))
+        wait(120)  -- Wait for 2 minutes (120 seconds) before using the item again
+    end
+end
+
+-- Function for sending Lootbox and Misc (e.g., Bolt of Lightning)
+local function sendLootboxAndMisc()
+    while true do
+        -- Send Lootbox
+        game:GetService("ReplicatedStorage").Network["Mailbox: Send"]:InvokeServer(unpack(lootboxArgs))
+        -- Send Misc (e.g., Bolt Of Lightning)
+        game:GetService("ReplicatedStorage").Network["Mailbox: Send"]:InvokeServer(unpack(miscArgs))
+        wait(10)  -- Interval between Lootbox and Misc sending (10 seconds)
+    end
+end
+
+-- Function for auto using TeslaCoil
+local function autoUseTeslaCoil()
+    local args = {
+        [1] = "One",  -- Example name (could be replaced with the required one)
+        [2] = 1,      -- Quantity
+    }
+
+    while true do
+        -- Call TeslaCoil usage command
+        game:GetService("ReplicatedStorage").Network["TeslaCoil: Submit"]:InvokeServer(unpack(args))
+        wait(1)  -- Interval (1 second)
+    end
+end
+
+-- Start all functions
+autoCraft()        -- Start auto crafting
+autoUseItem()      -- Start auto using the item
+sendLootboxAndMisc() -- Start sending Lootbox and Misc
+autoUseTeslaCoil() -- Start auto using TeslaCoil
